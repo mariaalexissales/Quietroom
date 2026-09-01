@@ -9,7 +9,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Plus, Minus, Play, Pause, Square } from "lucide-react";
 import { useState, useEffect } from "react";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
+
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import { useTheme } from "@mui/material/styles";
 
 export default function Timer() {
   const [timeSeconds, setTimeSeconds] = useState(25 * 60);
@@ -52,6 +56,12 @@ export default function Timer() {
 
   const { minutes, seconds } = secondsToParts(timeSeconds);
 
+  const theme = useTheme();
+  const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
+  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+
+  const ringSize = isMdUp ? "10rem" : isSmUp ? "8rem" : "6rem";
+
   return (
     <Card
       variant="outlined"
@@ -74,7 +84,7 @@ export default function Timer() {
           <CircularProgress
             variant="determinate"
             value={(secondsLeft / timeSeconds) * 100}
-            size={{ xs: "6rem", sm: "8rem", md: "10rem" } as any}
+            size={ringSize}
             thickness={3}
           />
           <Box
@@ -98,18 +108,22 @@ export default function Timer() {
             label="min"
             type="number"
             value={minutes}
-            onChange={(e) =>
-              setTimeSeconds(Number(e.target.value) * 60 + seconds)
-            }
+            onChange={(e) => {
+              const newTotal = Number(e.target.value) * 60 + seconds;
+              setTimeSeconds(newTotal);
+              if (!isRunning) setSecondsLeft(newTotal);
+            }}
           />
           <Typography variant="h6">:</Typography>
           <TextField
             label="sec"
             type="number"
             value={seconds}
-            onChange={(e) =>
-              setTimeSeconds(minutes * 60 + Number(e.target.value))
-            }
+            onChange={(e) => {
+              const newTotal = minutes * 60 + Number(e.target.value);
+              setTimeSeconds(newTotal);
+              if (!isRunning) setSecondsLeft(newTotal);
+            }}
           />
         </Box>
         <Box>
