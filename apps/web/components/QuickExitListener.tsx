@@ -19,8 +19,6 @@ export default function QuickExitListener() {
         (t) => now - t < WINDOW_MS,
       );
 
-      console.log("presses:", pressesRef.current);
-
       if (pressesRef.current.length >= THRESHOLD) {
         pressesRef.current = [];
         window.location.replace(EXIT_URL);
