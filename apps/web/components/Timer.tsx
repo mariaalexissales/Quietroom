@@ -183,6 +183,15 @@ export default function Timer() {
           }}
         >
           <Card variant="outlined" sx={{ padding: { xs: "12px", sm: "24px" } }}>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button
+                onClick={() => setIsFlipped((prev) => !prev)}
+                size="small"
+                sx={{ minWidth: "auto", padding: "4px" }}
+              >
+                <X size={18} />
+              </Button>
+            </Box>
             <CardContent>
               {resources === null ? (
                 <Typography>Loading...</Typography>
