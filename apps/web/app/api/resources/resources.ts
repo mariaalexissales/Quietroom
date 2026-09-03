@@ -1,6 +1,6 @@
 export type Region = "US" | "CA" | "UK" | "IE" | "AU";
 
-type ResourceEntry = {
+export type ResourceEntry = {
   region: string;
   label: string;
   call: string;

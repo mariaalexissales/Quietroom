@@ -6,19 +6,30 @@ import CardContent from "@mui/material/CardContent";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Plus, Minus, Play, Pause, Square } from "lucide-react";
-import { useState, useEffect } from "react";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Typography from "@mui/material/Typography";
-
 import useMediaQuery from "@mui/material/useMediaQuery";
-
 import { useTheme } from "@mui/material/styles";
+
+import { Play, Pause, Square } from "lucide-react";
+import React, { useState, useEffect } from "react";
+
+import type { ResourceEntry } from "../app/api/resources/resources";
 
 export default function Timer() {
   const [timeSeconds, setTimeSeconds] = useState(25 * 60);
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [resources, setResources] = useState<ResourceEntry[] | null>(null);
+
+  useEffect(() => {
+    if (isFlipped && resources === null) {
+      fetch("/api/resources")
+        .then((res) => res.json())
+        .then((data) => setResources(data));
+    }
+  }, [isFlipped, resources]);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -88,18 +99,29 @@ export default function Timer() {
             thickness={3}
           />
           <Box
+            onClick={() => setIsFlipped((prev) => !prev)}
             sx={{
               position: "absolute",
               inset: "0",
               display: "grid",
               placeItems: "center",
+              cursor: "pointer",
             }}
           >
             <Typography
               variant="h5"
               sx={{ fontSize: { xs: "1.5rem", sm: "2rem" } }}
             >
-              {formatTime(secondsLeft)}
+              {formatTime(secondsLeft)
+                .split(":")
+                .map((part, i, arr) => (
+                  <React.Fragment key={i}>
+                    {part}
+                    {i < arr.length - 1 && (
+                      <span style={{ color: "var(--teal)" }}>:</span>
+                    )}
+                  </React.Fragment>
+                ))}
             </Typography>
           </Box>
         </Box>
